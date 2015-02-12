@@ -1,0 +1,16 @@
+=======
+CHANGES
+=======
+
+0.1.1
+-----
+
+* Update metadata
+* Fix the country list
+
+
+0.1
+---
+
+* Initial release
+

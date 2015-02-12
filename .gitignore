@@ -1,0 +1,5 @@
+./build/
+./bin/TrusticoAPI
+*~
+*.tmp
+*.py[co]

@@ -1,0 +1,10 @@
+{
+  "product" : "quickssl",
+  "csr" : "",
+  "period" : 12,
+  "approver" : "admin@example.com",
+  "insurance" : 0,
+  "servercount" : 1,
+  "techusereseller" : 1,
+  "novalidation" : 0
+}
