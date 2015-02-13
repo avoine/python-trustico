@@ -22,7 +22,7 @@ import simplejson
 from M2Crypto import X509
 
 from pprint import pprint
-from optparse import OptionParser
+from argparse import ArgumentParser, RawTextHelpFormatter
 
 from schema import PRODUCTS, PROCESS
 from schema import validate_order, validate_address, ValidationError
@@ -108,42 +108,43 @@ class TrusticoAPI:
 
 
 def main():
-    parser = OptionParser()
+    parser = ArgumentParser(description="Trustico API CLI",
+                        formatter_class=RawTextHelpFormatter)
 
-    parser.add_option("-u", "--username", dest="username",
-                    metavar="<username>", help="Your Trustico username")
-    parser.add_option("-p", "--password", dest="password",
+    parser.add_argument("-u", "--username", dest="username", type=str,
+                    help="Your Trustico username")
+    parser.add_argument("-p", "--password", dest="password", type=str,
                     help="Your Trustico password")
 
-    parser.add_option("-l", "--products", dest="show_products", action="store_true",
+    parser.add_argument("-l", "--products", dest="show_products", action="store_true",
                     help="List products and related options")
 
-    parser.add_option("-s", "--status", dest="status", action="store_true",
+    parser.add_argument("-s", "--status", dest="status", action="store_true",
                     help="Query a status of an order or an issuer")
-    parser.add_option("-o", "--orderid", dest="orderid",
+    parser.add_argument("-o", "--orderid", dest="orderid", type=str,
                     help="The order id to check")
-    parser.add_option("-i", "--issuerid", dest="issuersid",
+    parser.add_argument("-i", "--issuerid", dest="issuerid", type=str,
                     help="The Issuers id to check")
 
 
-    parser.add_option("-t", "--test", dest="test", action="store_true",
+    parser.add_argument("-t", "--test", dest="test", action="store_true",
                     help="Test the username/password")
-    parser.add_option("-r", "--renewal", dest="renewal", action="store_true",
+    parser.add_argument("-r", "--renewal", dest="renewal", action="store_true",
                     help="Make the order processed as a renewal instead of a new order")
 
-    parser.add_option("-a", "--approvers", dest="approvers", action="store_true",
-                    help="<domain> Get the list of approvers email for a domain")
+    parser.add_argument("-a", "--approvers", dest="approvers", type=str,
+                    help="Get the list of approvers email for a domain", metavar="DOMAIN")
 
-    parser.add_option("-C", "--csr_file", dest="csr_file",
+    parser.add_argument("-C", "--csr_file", dest="csr_file", type=str,
                     help="Your certificate request", metavar="FILE")
-    parser.add_option("-A", "--admin_address_file", dest="admin_address_file",
+    parser.add_argument("-A", "--admin_address_file", dest="admin_address_file", type=str,
                     help="JSON file containing the admin address", metavar="FILE")
-    parser.add_option("-T", "--tech_address_file", dest="tech_address_file",
+    parser.add_argument("-T", "--tech_address_file", dest="tech_address_file", type=str,
                     help="JSON file containing the tech address", metavar="FILE")
-    parser.add_option("-O", "--order_file", dest="order_file",
+    parser.add_argument("-O", "--order_file", dest="order_file", type=str,
                     help="JSON file containing the order", metavar="FILE")
 
-    (opt, args) = parser.parse_args()
+    opt = parser.parse_args()
 
     if opt.show_products:
         pprint(PRODUCTS)
@@ -154,9 +155,9 @@ def main():
         pprint(t.hello())
         sys.exit(0)
 
-    if opt.approvers and opt.username and opt.password and len(args) == 1:
+    if opt.approvers and opt.username and opt.password:
         t = TrusticoAPI(opt.username, opt.password)
-        t.get_approvers(args[0], cli=True)
+        t.get_approvers(opt.approvers, cli=True)
         sys.exit(0)
 
     if opt.status and opt.orderid:
@@ -164,9 +165,9 @@ def main():
         pprint(t.status_orderid(opt.orderid))
         sys.exit(0)
 
-    if opt.status and opt.issuersid:
+    if opt.status and opt.issuerid:
         t = TrusticoAPI(opt.username, opt.password)
-        pprint(t.status_issuersid(opt.issuersid))
+        pprint(t.status_issuerid(opt.issuerid))
         sys.exit(0)
 
     if opt.username and opt.password and opt.admin_address_file and\
@@ -206,6 +207,5 @@ def main():
         sys.exit(0)
 
     parser.print_help()
-    print "incorrect arguments"
+    print "Incorrect arguments"
     sys.exit(1)
-
